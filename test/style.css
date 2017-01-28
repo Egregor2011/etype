@@ -22,3 +22,12 @@ section {
 	padding: 20px 20px;
 	height: 200px;
 }
+body {
+	height: 1400px;
+}
+.anchor {
+	width: 100px;
+	height: 100px;
+	position: relative;
+	border: 1px solid red;
+}

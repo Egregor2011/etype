@@ -3,11 +3,11 @@
 	let _getElements = (selector) => {
 		return [].slice.call(selector);
 	};
-	let _elStorage: string[] = ['etype-hide', 'etype-show', 'etype-toggle', 'etype-section', 'etype-link', 'etype-cross'];
+	let _elStorage: string[] = ['hide', 'show', 'toggle', 'section', 'link', 'cross', 'anchor'];
 	let _letStorage = {};
 
 	_elStorage.map((el) => {
-		_letStorage[el] = _getElements(document.querySelectorAll(`[${el}]`));
+		_letStorage["etype-" + el] = _getElements(document.querySelectorAll(`[etype-${el}]`));
 	});
 
 	Object.keys(_letStorage).map((key) => {
@@ -47,6 +47,26 @@
 							break;
 						case 'etype-cross':
 							_uiElement.click();
+							break;
+						
+						case 'etype-anchor':
+							const windowView = document.body.scrollTop;
+							const elementPosition = _uiElement.offsetTop;
+							const timeOut = 10;
+							const step = 0;
+							const mainTime = 400;
+							const distance = elementPosition - windowView;
+							const stepPerMoment = Math.round(distance / (mainTime/timeOut));
+
+							const anchorAnimation = () => {
+								window.scrollTo(0, step);
+								step = step + stepPerMoment;
+
+								return step < elementPosition ? setTimeout(anchorAnimation, timeOut) : window.scrollTo(0, elementPosition);
+							}
+
+							anchorAnimation();
+
 							break;
 					}
 				});
