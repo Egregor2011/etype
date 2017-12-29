@@ -1,77 +1,90 @@
-
 {
-	let _getElements = (selector) => {
-		return [].slice.call(selector);
-	};
-	let _elStorage: string[] = ['hide', 'show', 'toggle', 'section', 'link', 'cross', 'anchor'];
-	let _letStorage = {};
+  let _getElements = selector => {
+    return [...selector];
+  };
+  let elStorage: string[] = [
+    'hide',
+    'show',
+    'toggle',
+    'section',
+    'link',
+    'cross',
+    'anchor',
+  ];
+  let letStorage = elStorage.map(el => {
+    return {
+      ['etype-' + el]: _getElements(document.querySelectorAll(`[etype-${el}]`)),
+    };
+  });
 
-	_elStorage.map((el) => {
-		_letStorage["etype-" + el] = _getElements(document.querySelectorAll(`[etype-${el}]`));
-	});
+  const getListeners = el => {
+    let _attr = _getElements(el.target.attributes).filter(_ell => {
+      return _ell.name === '' + this._freeze;
+    });
 
-	Object.keys(_letStorage).map((key) => {
-		if (key !== 'etype-section') {
+    let _uiElement = document.querySelector(
+      '[etype-element=' + _attr[0].value + ']',
+    );
 
-			_letStorage[key].map((el) => {
-				let _freeze = key;
+    switch (this._freeze) {
+      case 'etype-hide':
+      case 'etype-show':
+        _uiElement.style.display =
+          this._freeze === 'etype-hide' ? 'none' : 'block';
+        break;
 
-				el.addEventListener('click', function (el) {
+      case 'etype-link':
+        let _thisSection = document.querySelector(
+          '[etype-section=' + _attr[0].value + ']',
+        );
+        letStorage['etype-section'].map(el => {
+          el.style.display = 'none';
+        });
+        _thisSection.style.display = 'block';
 
-					let _attr = _getElements(el.target.attributes).filter((_ell) => {
-						return _ell.name === '' + _freeze;
-					});
+        break;
+      case 'etype-toggle':
+        _uiElement.style.display =
+          _uiElement.style.display === 'none' ? 'block' : 'none';
 
-					let _uiElement = document.querySelector('[etype-element=' + _attr[0].value + ']');
+        break;
+      case 'etype-cross':
+        _uiElement.click();
+        break;
 
-					switch (_freeze) {
-						case 'etype-hide':
-						case 'etype-show':
+      case 'etype-anchor':
+        const windowView = document.body.scrollTop;
+        const elementPosition = _uiElement.offsetTop;
+        const timeOut = 10;
+        let step = 0;
+        const mainTime = 400;
+        const distance = elementPosition - windowView;
+        const stepPerMoment = Math.round(distance / (mainTime / timeOut));
 
-							_uiElement.style.display = _freeze === 'etype-hide' ? 'none' : 'block';
-							break;
+        const anchorAnimation = () => {
+          window.scrollTo(0, step);
+          step = step + stepPerMoment;
 
-						case 'etype-link':
+          return step < elementPosition
+            ? setTimeout(anchorAnimation, timeOut)
+            : window.scrollTo(0, elementPosition);
+        };
 
-							let _thisSection = document.querySelector('[etype-section=' + _attr[0].value + ']');
-							_letStorage['etype-section'].map((el) => {
-								el.style.display = 'none';
-							});
-							_thisSection.style.display = 'block';
+        anchorAnimation();
 
-							break;
-						case 'etype-toggle':
+        break;
+    }
+  };
 
-							_uiElement.style.display = _uiElement.style.display === 'none' ? 'block' : 'none';
+  const getCategories = el => {
+    let _freeze = this.key;
+    return el.addEventListener('click', getListeners, {_freeze});
+  };
 
-							break;
-						case 'etype-cross':
-							_uiElement.click();
-							break;
-						
-						case 'etype-anchor':
-							const windowView = document.body.scrollTop;
-							const elementPosition = _uiElement.offsetTop;
-							const timeOut = 10;
-							const step = 0;
-							const mainTime = 400;
-							const distance = elementPosition - windowView;
-							const stepPerMoment = Math.round(distance / (mainTime/timeOut));
+  const getCategoryList = key =>
+    key !== 'etype-section' && letStorage[key].map(getCategories, {key});
 
-							const anchorAnimation = () => {
-								window.scrollTo(0, step);
-								step = step + stepPerMoment;
+  const main = () => Object.keys(letStorage).forEach(getCategoryList);
 
-								return step < elementPosition ? setTimeout(anchorAnimation, timeOut) : window.scrollTo(0, elementPosition);
-							}
-
-							anchorAnimation();
-
-							break;
-					}
-				});
-			});
-		}
-
-	});
-};
+  main();
+}
