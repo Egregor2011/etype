@@ -3,5 +3,5 @@ import { keyStorage } from "./etypeElements";
 
 export default (value, key) => {
   keyStorage.set("key", key);
-  value.forEach(getCategories);
+  value.map(getCategories);
 };

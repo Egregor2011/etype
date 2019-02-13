@@ -1,15 +1,17 @@
-import { getElements } from './helpers';
-import { elementDB } from './etypeElements';
-import setListener from './setListener';
+import { getElements } from "./helpers";
+import { elementDB } from "./etypeElements";
+import setListener from "./setListener";
 
-export default el => {
-  const elementName = elementDB.get(el.target);
+export default ({ target }) => {
+  const elementName = elementDB.get(target);
 
-  const attr = getElements(el.target.attributes).filter(attribute => {
-    return attribute.name === `${elementName}`;
+  const attr = getElements(target.attributes).filter(({ name }) => {
+    return name === `${elementName}`;
   });
 
-  const uiElement = document.querySelector('[etype-element=' + attr[0].value + ']');
+  const uiElement = document.querySelector(
+    "[etype-element=" + attr[0].value + "]"
+  );
 
   setListener(elementName)({ uiElement, elementName });
 };

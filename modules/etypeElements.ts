@@ -1,6 +1,14 @@
-import { getElements, capitalize } from './helpers';
+import { getElements, capitalize } from "./helpers";
 
-const methodList = ['hide', 'show', 'toggle', 'section', 'link', 'cross', 'anchor'];
+const methodList: Array<string> = [
+  "hide",
+  "show",
+  "toggle",
+  "section",
+  "link",
+  "cross",
+  "anchor"
+];
 
 export const etypeElements = new Map();
 
